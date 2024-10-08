@@ -1,0 +1,7 @@
+Za compile pokrenuti naredbu:
+
+    gcc src/glad.c src/main.cpp -L./lib -lstdc++ -lglfw3 -framework Cocoa -framework IOKit -framework CoreFoundation -o main
+
+Za pokretanje porenuti (iz root direktorija):
+
+    ./main

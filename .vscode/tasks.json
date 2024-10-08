@@ -1,42 +1,44 @@
 {
-    // See https://code.visualstudio.com/docs/editor/tasks for more information
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build-glad",
             "type": "shell",
             "command": "gcc",
             "args": [
-                "-std=c++17",
-                "-fdiagnostics-color=always",
-                "-Wall",
-                "-g",
-                "-I${workspaceFolder}/include",
-                "-L${workspaceFolder}/lib",
                 "${workspaceFolder}/src/glad.c",
-                "${workspaceFolder}/src/*.cpp",
-                "${workspaceFolder}/lib/libglfw.3.dylib",
-                "-o",
-                "${workspaceFolder}/main.exe",
-                "-framework",
-                "OpenGL"
+                "-c",
+                "-o", "${workspaceFolder}/glad.o",
+                "-I${workspaceFolder}/include"
             ],
+            "problemMatcher": ["$gcc"],
+            "detail": "Compile glad.c as C code"
+        },
+        {
+            "label": "build-cpp",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "\"g++ -std=c++17 -fdiagnostics-color=always -Wall -g -I${workspaceFolder}/include ${workspaceFolder}/src/main.cpp ${workspaceFolder}/glad.o -L${workspaceFolder}/lib ${workspaceFolder}/lib/libglfw.3.dylib -framework Cocoa -framework IOKit -framework CoreFoundation -o ${workspaceFolder}/main -Wl,-rpath,${workspaceFolder}/lib && rm ${workspaceFolder}/glad.o\""
+            ],
+            "dependsOn": "build-glad",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": ["$gcc"],
-            "detail": "Generated task for building C/C++ files"
+            "detail": "Compile and link C++ files, set rpath, then delete glad.o"
         },
         {
             "label": "clean",
             "type": "shell",
             "command": "rm",
             "args": [
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${workspaceFolder}/main"
             ],
             "group": "build",
-            "detail": "Generated task for cleaning build files"
+            "detail": "Task for cleaning the main file"
         }
     ]
 }

@@ -1,0 +1,42 @@
+{
+    // See https://code.visualstudio.com/docs/editor/tasks for more information
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-std=c++17",
+                "-fdiagnostics-color=always",
+                "-Wall",
+                "-g",
+                "-I${workspaceFolder}/include",
+                "-L${workspaceFolder}/lib",
+                "${workspaceFolder}/src/glad.c",
+                "${workspaceFolder}/src/*.cpp",
+                "${workspaceFolder}/lib/libglfw.3.dylib",
+                "-o",
+                "${workspaceFolder}/main.exe",
+                "-framework",
+                "OpenGL"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Generated task for building C/C++ files"
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "group": "build",
+            "detail": "Generated task for cleaning build files"
+        }
+    ]
+}

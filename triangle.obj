@@ -1,0 +1,7 @@
+# triangle.obj created by hand.
+ 
+v 0.34 0.50 0.0
+v 0.50 -0.26 0.0
+v -0.50 -0.50 0.0
+
+f 1 2 3

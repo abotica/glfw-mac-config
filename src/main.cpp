@@ -6,7 +6,7 @@
 #include <string>
 
 const unsigned int WIDTH = 800;
-const unsigned int HEIGHT = 600;
+const unsigned int HEIGHT = 800;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -43,7 +43,7 @@ int main(void)
     // Load .obj file
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
-    if (!loadOBJ("./triangle.obj", vertices, indices)) {
+    if (!loadOBJ("./dragon.obj", vertices, indices)) {
         return -1;
     }
 

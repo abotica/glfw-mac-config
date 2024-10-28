@@ -18,13 +18,23 @@ int main()
   
     Model model("res/models/rectangle.obj");
     Shader shader("res/shaders/vShader.glsl", "res/shaders/fShader.glsl");
-    Texture tex("res/textures/container.jpg");
+    Texture tex("res/textures/of9ktyw8s2ac1.jpeg");
 
     Renderer render;
+
+    float horizontalOffset = 0.9f;
+    float verticalOffset = 0.2f;
+
+    glm::vec3 color(1.0f, 0.0f, 0.0f);
+
     while (!window.isClosed())
     {
         window.ProcessInput();
         render.Clear();
+        
+        shader.Bind();
+        shader.SetUniformVec3("offset", horizontalOffset, verticalOffset, 0.0f);
+        shader.SetUniformVec3("color", color);
 
         model.Draw(shader, tex);
 

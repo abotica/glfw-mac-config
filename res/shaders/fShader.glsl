@@ -11,8 +11,6 @@ uniform sampler2D tex;
 
 void main()
 {
-	//color without texture
-	// fColor = vec4(color, 1.0);
 
 	//color with texture
 	vec4 texColor = texture(tex, TexCord);

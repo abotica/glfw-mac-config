@@ -22,7 +22,7 @@ int main()
 
     Renderer render;
 
-    float horizontalOffset = 0.9f;
+    float horizontalOffset = 0.6f;
     float verticalOffset = 0.2f;
 
     glm::vec3 color(1.0f, 0.0f, 0.0f);

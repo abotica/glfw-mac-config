@@ -14,75 +14,114 @@
 #include "./vendor/glm/gtc/type_ptr.hpp"
 #include "./vendor/glm/glm.hpp"
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1000;
+const unsigned int SCR_HEIGHT = 1000;
 
 // 3D transformations
-glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+// glm::mat4 projection = glm::ortho(-5.0f, 5.0f, -7.0f, 7.0f, 0.1f, 100.0f);
+// glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
 
-// glm::mat4 projection = glm::ortho(0.0f, (float)SCR_WIDTH, 0.0f, (float)SCR_HEIGHT, 0.1f, 100.0f);
-// glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
 glm::vec3 cubePositions[] = {
-    glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(2.0f, 5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3(2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f, 3.0f, -7.5f),
-    glm::vec3(1.3f, -2.0f, -2.5f),
-    glm::vec3(1.5f, 2.0f, -2.5f),
-    glm::vec3(1.5f, 0.2f, -1.5f),
-    glm::vec3(-1.3f, 1.0f, -1.5f)};
+    glm::vec3(-1.0f, 0.0f, -5.0f),
+    glm::vec3(0.0f, 0.0f, -5.0f),
+    glm::vec3(1.0f, 0.0f, -5.0f)
+};
+
+const float radius = 10.0f;
+glm::vec3 cameraTarget(cubePositions[1]);
+
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+
+glm::vec3 objectColor[] = {
+    glm::vec3(1.0f, 0.5f, 0.31f),
+    glm::vec3(0.0f, 1.0f, 0.0f),
+    glm::vec3(0.0f, 0.0f, 1.0f)
+};
+
+float specularStrength[] = {
+    0.5f,
+    0.3f,
+    0.9f
+};
+
+
+
 
 int main()
 {
-    Window window("Vjezba3", SCR_WIDTH, SCR_HEIGHT);
+    Window window("Vjezba4", SCR_WIDTH, SCR_HEIGHT);
 
-    Model model("res/models/rectangle.obj");
+     glEnable(GL_DEPTH_TEST);
+
+    Model model("res/models/kocka.obj");
+    Model lightModel("res/models/kocka.obj");
     Shader shader("res/shaders/vShader.glsl", "res/shaders/fShader.glsl");
     Texture tex("res/textures/of9ktyw8s2ac1.jpeg");
 
     Renderer render;
 
-    float horizontalOffset = 0.0f;
-    float verticalOffset = 0.0f;
+    unsigned int model_VBO, light_VBO;
 
-    glm::vec3 color(1.0f, 1.0f, 1.0f);
+    glGenBuffers(1, &model_VBO);
+    glGenBuffers(1, &light_VBO);
 
-    // 3D transformations
-    // mat_model = glm::rotate(mat_model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glBindBuffer(GL_ARRAY_BUFFER, model_VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, light_VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(model), &model, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(lightModel), &lightModel, GL_STATIC_DRAW);
+
+
 
     while (!window.isClosed())
     {
         window.ProcessInput();
         render.Clear();
 
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        float cameraPitch = sin(glm::radians(45.0f));
+        glm::vec3 cameraPosition(camX, cameraPitch, camZ);
+        glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0, 1.0, 0.0));
+
+        glm::vec3 lightPos(camX, 1.0f, camZ);
+
         shader.Bind();
-        shader.SetUniformVec3("offset", horizontalOffset, verticalOffset, 0.0f);
-        shader.SetUniformVec3("color", color);
+        shader.SetUniform4x4("projection", projection);
+        shader.SetUniform4x4("view", view);
 
+        
+        glm::mat4 mat_lightModel = glm::mat4(1.0f);
+        mat_lightModel = glm::translate(mat_lightModel, lightPos);
+        mat_lightModel = glm::scale(mat_lightModel, glm::vec3(0.2f));
 
-         for (unsigned int i = 0; i < 3; i++)
+        shader.SetUniform4x4("model", mat_lightModel);
+        shader.SetUniformVec3("lightColor", lightColor);
+        shader.SetUniformVec3("lightPos", lightPos);
+        shader.SetUniformVec3("viewPos", cameraPosition);
+        
+        lightModel.Draw(shader, tex);
+
+        for (unsigned int i = 0; i < 3; i++)
         {
             glm::mat4 mat_model = glm::mat4(1.0f);
             mat_model = glm::translate(mat_model, cubePositions[i]);
-            float angle = 20.0f * i;
-            mat_model = glm::rotate(mat_model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            mat_model = glm::scale(mat_model, glm::vec3(0.5f));
+            float angle = 90.0f * i;
             shader.SetUniform4x4("model", mat_model);
-            shader.SetUniform4x4("view", view);
-            shader.SetUniform4x4("projection", projection);
-            
+            shader.SetUniformVec3("objectColor", objectColor[i]);
+            shader.SetUniformFloat("specularStrength", specularStrength[i]);
+           
 
-            // glDrawArrays(GL_TRIANGLES, 0, 36);
             model.Draw(shader, tex);
         }
 
-
+        
         window.SwapAndPoll();
     }
-
+    
     window.CloseWindow();
 
     return 0;

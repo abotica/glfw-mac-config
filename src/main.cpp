@@ -24,29 +24,32 @@ const unsigned int SCR_HEIGHT = 1000;
 glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
 glm::vec3 cubePositions[] = {
-    glm::vec3(-1.0f, 0.0f, -5.0f),
-    glm::vec3(0.0f, 0.0f, -5.0f),
-    glm::vec3(1.0f, 0.0f, -5.0f)
+    glm::vec3(-1.0f, 0.0f, 0.0f),
+    glm::vec3(0.0f, 0.0f, 0.0f),
+    glm::vec3(1.0f, 0.0f, 0.0f),
+    glm::vec3(2.0f, 0.0f, 0.0f)
 };
 
-const float radius = 10.0f;
+const float radius = 6.0f;
 glm::vec3 cameraTarget(cubePositions[1]);
-float cameraRoll = sin(glm::radians(45.0f));;
-glm::vec3 cameraPosition(0.0f, 1.0f, cameraRoll);
-glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0, 0.0, -1.0));
+//tangens 45 je 1 kada je y = z (skica)
+glm::vec3 cameraPosition(0.0f, 4.0f, 4.0f);
+glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0, 1.0, 0.0));
 
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
 glm::vec3 objectColor[] = {
     glm::vec3(1.0f, 0.5f, 0.31f),
     glm::vec3(0.0f, 1.0f, 0.0f),
-    glm::vec3(0.0f, 0.0f, 1.0f)
+    glm::vec3(0.0f, 0.0f, 1.0f),
+    glm::vec3(1.0f, 0.0f, 0.0f)
 };
 
 float specularStrength[] = {
-    0.5f,
+    1.0f,
     0.3f,
-    0.9f
+    0.9f,
+    0.3f
 };
 
 
@@ -88,7 +91,8 @@ int main()
         // glm::vec3 cameraPosition(camX, cameraRoll, camZ);
         // glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0, 1.0, 0.0));
 
-        glm::vec3 lightPos(camX, 1.0f, camZ);
+        //mozda +1.0f na X?
+        glm::vec3 lightPos(camX, 5.0f, camZ);
 
         shader.Bind();
         shader.SetUniform4x4("projection", projection);
@@ -106,7 +110,7 @@ int main()
         
         lightModel.Draw(shader, tex);
 
-        for (unsigned int i = 0; i < 3; i++)
+        for (unsigned int i = 0; i < 4; i++)
         {
             glm::mat4 mat_model = glm::mat4(1.0f);
             mat_model = glm::translate(mat_model, cubePositions[i]);

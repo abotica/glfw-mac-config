@@ -14,7 +14,6 @@ uniform vec3 lightPos;
 void main()
 {
    	float ambientStrength = 0.1;
-	float specularStrength = 0.5;
 
 	//Ambient
     vec3 ambient = ambientStrength * lightColor;

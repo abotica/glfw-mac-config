@@ -31,6 +31,9 @@ glm::vec3 cubePositions[] = {
 
 const float radius = 10.0f;
 glm::vec3 cameraTarget(cubePositions[1]);
+float cameraRoll = sin(glm::radians(45.0f));;
+glm::vec3 cameraPosition(0.0f, 1.0f, cameraRoll);
+glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0, 0.0, -1.0));
 
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
@@ -82,9 +85,8 @@ int main()
 
         float camX = sin(glfwGetTime()) * radius;
         float camZ = cos(glfwGetTime()) * radius;
-        float cameraPitch = sin(glm::radians(45.0f));
-        glm::vec3 cameraPosition(camX, cameraPitch, camZ);
-        glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0, 1.0, 0.0));
+        // glm::vec3 cameraPosition(camX, cameraRoll, camZ);
+        // glm::mat4 view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0, 1.0, 0.0));
 
         glm::vec3 lightPos(camX, 1.0f, camZ);
 
